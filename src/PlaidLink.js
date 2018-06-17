@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import Script from 'react-load-script';
 import PropTypes from 'prop-types';
 
-
-
 class PlaidLink extends Component {
   constructor(props) {
     super(props);
@@ -37,13 +35,14 @@ class PlaidLink extends Component {
   static propTypes = {
     // ApiVersion flag to use new version of Plaid API
     apiVersion: PropTypes.string,
-    
+
     // Displayed once a user has successfully linked their account
     clientName: PropTypes.string.isRequired,
 
     // The Plaid API environment on which to create user accounts.
     // For development and testing, use tartan. For production, use production
-    env: PropTypes.oneOf(['tartan', 'sandbox', 'development', 'production']).isRequired,
+    env: PropTypes.oneOf(['tartan', 'sandbox', 'development', 'production'])
+      .isRequired,
 
     // Open link to a specific institution, for a more custom solution
     institution: PropTypes.string,
@@ -56,13 +55,13 @@ class PlaidLink extends Component {
     // auth, identity, income, transactions
     product: PropTypes.arrayOf(
       PropTypes.oneOf([
-        'connect',  // legacy product name
-        'info',     // legacy product name
+        'connect', // legacy product name
+        'info', // legacy product name
         'auth',
         'identity',
         'income',
         'transactions',
-      ])
+      ]),
     ).isRequired,
 
     // Specify an existing user's public token to launch Link in update mode.
@@ -94,12 +93,8 @@ class PlaidLink extends Component {
     // See
     onEvent: PropTypes.func,
 
-    // Button Styles as an Object
-    style: PropTypes.object,
-
-    // Button Class names as a String
-    className: PropTypes.string,
-  }
+    children: PropTypes.element,
+  };
 
   onScriptError() {
     console.error('There was an issue loading the link-initialize.js script');
@@ -149,19 +144,17 @@ class PlaidLink extends Component {
 
   render() {
     return (
-      <div>
-        <button
-          onClick={this.handleOnClick}
-          disabled={this.state.disabledButton}
-          style={this.props.style}
-          className={this.props.className}>
-          {this.props.children}
-        </button>
+      <React.Fragment>
+        {this.props.children({
+          onClick: this.handleOnClick,
+          isDisabled: this.state.disabledButton,
+        })}
         <Script
           url={this.state.initializeURL}
           onError={this.onScriptError}
-          onLoad={this.onScriptLoaded} />
-      </div>
+          onLoad={this.onScriptLoaded}
+        />
+      </React.Fragment>
     );
   }
 }
